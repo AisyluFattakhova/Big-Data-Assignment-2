@@ -8,7 +8,7 @@
 
 The repository is fully containerized. To execute the entire pipeline:
 1.  _(Optional)_ Place the `a.parquet` file into the `app/` folder.
-- If provided, the system will extract and process up to 1000 documents automatically.
+- If provided, the system will extract and process up to 100 documents automatically.
 - If not provided, the system will still work using the pre-existing `.txt` files located in the `app/data/` directory.
 1.  Run:
     ``` bash
