@@ -14,7 +14,7 @@ The repository is fully containerized. To execute the entire pipeline:
     ``` bash
        docker compose up --build
     ```
-2.  The system will automatically start Hadoop, index 1000 documents, load Cassandra, and run a sample query for "history".
+2.  The system will automatically start Hadoop, index 100 documents, load Cassandra, and run a sample query for "history".
 3.  To run a custom query manually:
     ```bash
     docker exec -it cluster-master bash /app/search.sh "your_query"
