@@ -1,1 +1,0 @@
-print("this is mapper 1")
