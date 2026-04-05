@@ -1,43 +1,22 @@
 #!/bin/bash
-# This will run only by the master node
 
-# starting HDFS daemons
-$HADOOP_HOME/sbin/start-dfs.sh
+service ssh start
+ssh-keyscan -H cluster-master >> ~/.ssh/known_hosts
+ssh-keyscan -H cluster-slave-1 >> ~/.ssh/known_hosts
 
-# starting Yarn daemons
-$HADOOP_HOME/sbin/start-yarn.sh
-# yarn --daemon start resourcemanager
+/usr/local/hadoop/sbin/start-dfs.sh
+/usr/local/hadoop/sbin/start-yarn.sh
 
-# Start mapreduce history server
-mapred --daemon start historyserver
+echo "Waiting for HDFS"
+until hdfs dfsadmin -safemode wait > /dev/null 2>&1; do sleep 2; done
 
+echo "Uploading Spark jars to HDFS"
+hdfs dfs -rm -r /spark 2>/dev/null
+hdfs dfs -mkdir -p /spark/jars
+hdfs dfs -put /usr/local/spark/jars/* /spark/jars/
+echo "Spark jars uploaded."
 
-# track process IDs of services
-jps -lm
-
-# subtool to perform administrator functions on HDFS
-# outputs a brief report on the overall HDFS filesystem
-hdfs dfsadmin -report
-
-# If namenode in safemode then leave it
-hdfs dfsadmin -safemode leave
-
-# create a directory for spark apps in HDFS
-hdfs dfs -mkdir -p /apps/spark/jars
-hdfs dfs -chmod 744 /apps/spark/jars
-
-
-# Copy all jars to HDFS
-hdfs dfs -put /usr/local/spark/jars/* /apps/spark/jars/
-hdfs dfs -chmod +rx /apps/spark/jars/
-
-
-# print version of Scala of Spark
-scala -version
-
-# track process IDs of services
-jps -lm
-
-# Create a directory for root user on HDFS
-hdfs dfs -mkdir -p /user/root
-
+echo "Waiting for Cassandra"
+while ! python3 -c "import socket; s = socket.socket(); s.settimeout(1); s.connect(('cassandra-server', 9042))" 2>/dev/null; do 
+    sleep 2
+done

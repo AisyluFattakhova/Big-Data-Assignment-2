@@ -1,20 +1,16 @@
 #!/bin/bash
 
-source .venv/bin/activate
+echo "Starting data preparation"
 
 
-# Python of the driver (/app/.venv/bin/python)
-export PYSPARK_DRIVER_PYTHON=$(which python) 
 
+# Run Spark job
+# spark-submit --master yarn --deploy-mode client /app/prepare_data.py || \
+spark-submit --master local[*] /app/prepare_data.py
 
-unset PYSPARK_PYTHON
+echo "Checking HDFS data"
 
-# DOWNLOAD a.parquet or any parquet file before you run this
+hdfs dfs -ls /data
+hdfs dfs -ls /input/data
 
-hdfs dfs -put -f a.parquet / && \
-    spark-submit prepare_data.py && \
-    echo "Putting data to hdfs" && \
-    hdfs dfs -put data / && \
-    hdfs dfs -ls /data && \
-    hdfs dfs -ls /indexer/data && \
-    echo "done data preparation!"
+echo "Data preparation finished"

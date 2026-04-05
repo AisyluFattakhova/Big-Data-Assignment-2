@@ -1,2 +1,3 @@
 #!/bin/bash
-echo "store the index and others to Cassandra/ScyllaDB tables"
+python3 /app/create_schema.py
+python3 /app/app.py

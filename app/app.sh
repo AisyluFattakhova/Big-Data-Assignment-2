@@ -1,26 +1,17 @@
 #!/bin/bash
-# Start ssh server
-service ssh restart 
+cd /app
 
-# Starting the services
-bash start-services.sh
-
-# Creating a virtual environment
-python3 -m venv .venv
-source .venv/bin/activate
-
-# Install any packages
-pip install -r requirements.txt  
-
-# Package the virtual env.
-venv-pack -o .venv.tar.gz
-
-# Collect data
-bash prepare_data.sh
+bash /app/start-services.sh
 
 
-# Run the indexer
-bash index.sh
+apt-get update && apt-get install -y python3-pip
+python3 -m pip install -r /app/requirements.txt
 
-# Run the ranker
-bash search.sh "this is a query!"
+bash /app/prepare_data.sh
+bash /app/index.sh
+
+
+# Start the search
+bash /app/search.sh "history"
+
+tail -f /dev/null
